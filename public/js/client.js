@@ -1,6 +1,16 @@
 
-var socket = io.connect('http://localhost');
-socket.on('hi', function(data) {
-  console.log(data);
-  socket.emit('hi', 'whatup');
-})
+
+
+// initialize game
+function initialize() {
+
+  var socket = io.connect('http://localhost');
+  socket.on('hi', function(data) {
+    console.log(data);
+    socket.emit('hi', 'whatup');
+  })
+
+}
+
+function render(ctx) {
+}
