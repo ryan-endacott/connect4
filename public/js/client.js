@@ -9,6 +9,7 @@ var width;
 var height;
 var socket;
 var gameboard;
+var pname; // player name
 
 // constants
 var P1 = 1;
@@ -26,9 +27,6 @@ var RAD = 40; // gamepiece radius
 // initialize game
 function initialize(playerName) {
 
-  socket = io.connect('http://localhost');
-  socket.emit('newPlayer', playerName)
-
   canvas = document.getElementById('connect4');
   ctx = canvas.getContext('2d');
   width = canvas.width;
@@ -41,6 +39,21 @@ function initialize(playerName) {
   }
 
   render();
+
+  pname = prompt("Hi! What's your name?");
+
+  socket = io.connect('http://localhost');
+  socket.emit('newPlayer', pname);
+  socket.on('opponentFound', opponentFound);
+  socket.on('error', handleError);
+}
+
+function handleError(error) {
+  alert("Error: " + error + "\nStarting over...");
+  initialize();
+}
+
+function opponentFound(opponentName) {
 }
 
 function update(newMove) {
