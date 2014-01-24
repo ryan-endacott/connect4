@@ -10,6 +10,9 @@ var height;
 var socket;
 var gameboard;
 var pname; // player name
+var pNum; // player ID
+var curTurn;
+var opponentName;
 
 // constants
 var P1 = 1;
@@ -44,8 +47,12 @@ function initialize(playerName) {
 
   socket = io.connect('http://localhost');
   socket.emit('newPlayer', pname);
-  socket.on('opponentFound', opponentFound);
+
+  socket.on('matchFound', matchFound);
   socket.on('error', handleError);
+  socket.on('move', handleMove);
+
+  $(canvas).click(handleClick);
 }
 
 function handleError(error) {
@@ -53,10 +60,47 @@ function handleError(error) {
   initialize();
 }
 
-function opponentFound(opponentName) {
+function matchFound(data) {
+  pNum = data.playerNum;
+  opponentName = data.opponentName;
+  alert("You will be playing against " + opponentName + "!");
+  setTurn(data.turn);
 }
 
-function update(newMove) {
+function setTurn(turn) {
+  curTurn = turn;
+  if (pNum == turn) {
+    alert("It's your turn!");
+  }
+}
+
+// Handle a gameboard click and make a move if it is
+// your turn.
+function handleClick(evt) {
+  if (pNum != curTurn) // do nothing if not your turn
+    return;
+
+  var mousePos = getMousePos(canvas, evt);
+  var column = Math.floor(mousePos.x / TSIZE);
+  // TODO: handle case of a full column later
+  curTurn = (pNum == 1) ? 2 : 1
+  socket.emit('move', column);
+}
+
+// Get mouse position from a mouse event
+function getMousePos(canvas, evt) {
+  var rect = canvas.getBoundingClientRect();
+  return {
+    x: evt.clientX - rect.left,
+    y: evt.clientY - rect.top
+  };
+}
+
+
+function handleMove(move) {
+  curTurn = move.turn;
+  gameboard[move.x][move.y] = move.pNum;
+  render();
 }
 
 function render() {
