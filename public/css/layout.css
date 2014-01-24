@@ -1,7 +1,16 @@
 body {
   padding-top: 50px;
 }
-.starter-template {
-  padding: 40px 15px;
-  text-align: center;
+
+.container-main {
+  margin-top: 75px;
+}
+
+.container-canvas {
+  margin: 0 auto;
+  width: 800px;
+}
+
+canvas {
+  border: 1px solid #333;
 }
