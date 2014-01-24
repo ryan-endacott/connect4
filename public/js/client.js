@@ -11,7 +11,6 @@ var socket;
 var gameboard;
 
 // constants
-var EMPTY = 0;
 var P1 = 1;
 var P2 = 2;
 var BOARDWIDTH = 8;
@@ -53,14 +52,25 @@ function render() {
 
   ctx.fillRect(0, 0, width, height);
 
-  ctx.fillStyle = 'white';
-
   for (var x = 0; x < BOARDWIDTH; x++) {
     for (y = 0; y < BOARDHEIGHT; y++) {
       // top left of tile coords
       var tx = x * TSIZE;
       var ty = y * TSIZE;
       ctx.beginPath();
+
+      // select color based on player
+      switch(gameboard[x][y]) {
+        case P1:
+          ctx.fillStyle = 'red';
+          break;
+        case P2:
+          ctx.fillStyle = 'blue';
+          break;
+        default:
+          ctx.fillStyle = 'white';
+      }
+
       ctx.arc(tx + CMOD, ty + CMOD, RAD, 0, 2 * Math.PI, false);
       ctx.fill();
       ctx.lineWidth = 3;
