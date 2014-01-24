@@ -5,6 +5,7 @@ var unmatchedPlayers = [];
 // Constants
 var BOARDWIDTH = 8;
 var BOARDHEIGHT = 6;
+var WINCOND = 4; // num in a row needed to win
 
 // Export entire game function
 module.exports = function(io) {
@@ -97,8 +98,8 @@ Game.prototype.handleMove = function(pNum, column) {
 
       this.gameboard[column][y] = pNum;
 
-      var win = this.checkForWin(column, y);
       this.curTurn = (this.curTurn == 1) ? 2 : 1;
+      var win = this.checkForWin(column, y);
 
       // Broadcast the move
       this.player1.socket.emit('move', {
@@ -121,6 +122,170 @@ Game.prototype.handleMove = function(pNum, column) {
   }
 }
 
+// Function to see if someone has won after moving
+// at position x, y
 Game.prototype.checkForWin = function(x, y) {
+  return this.checkForHorizWin(x, y) ||
+    this.checkForVertWin(x, y) ||
+    this.checkForPosDiagWin(x, y) ||
+    this.checkForNegDiagWin(x, y);
 };
+
+// Function to see if someone won horizontally
+// Row and col are latest move space
+Game.prototype.checkForHorizWin = function(col, row) {
+
+  // Only need to check within range of a possible win,
+  // Also must be in bounds
+  var endCol = min(col + WINCOND - 1, BOARDWIDTH - 1);
+  col = max(col - WINCOND + 1, 0);
+
+
+  var count = 0;
+  for (;col <= endCol; col++) {
+
+    if (this.gameboard[row][col] == this.curTurn)
+      count++;
+    else
+      count = 0;
+
+    if (count == WINCOND)
+      return true;
+
+  }
+
+  return false;
+
+};
+
+
+// Function to see if someone won vertically
+// Row and col are latest move space
+Game.prototype.checkForVertWin = function(col, row) {
+
+
+  // Only need to check within range of a possible win,
+  // Also must be in bounds
+  var endRow = min(row + WINCOND - 1, BOARDHEIGHT - 1);
+  row = max(row - WINCOND + 1, 0);
+
+
+  var count = 0;
+  for (;row <= endRow; row++) {
+
+    if (this.gameboard[row][col] == this.curTurn)
+      count++;
+    else
+      count = 0;
+
+    if (count == WINCOND)
+      return true;
+
+  }
+
+  return false;
+
+};
+
+// Function to see if someone won positive diagonally
+// Row and col are latest move space
+Game.prototype.checkForPosDiagWin = function(col, row) {
+
+  // Set up endRow and endCol by setting to both to max possible
+  var endRow = min(row + WINCOND - 1, NUMROWS - 1);
+  var endCol = min(col + WINCOND - 1, NUMCOLS - 1);
+
+  // Then equalizing them to the max in bounds and on diag
+  var diff = min(endRow - row, endCol - col);
+  endRow = row + diff;
+  endCol = col + diff;
+
+  // Set up row and col the same way, both to min possible
+  row = max(row - WINCOND + 1, 0);
+  col = max(col - WINCOND + 1, 0);
+
+  // Then equalize to min in bounds and on diag
+  diff = min(endRow - row, endCol - col);
+  row = endRow - diff;
+  col = endCol - diff;
+
+
+
+  var count = 0;
+
+  // Because all are equalized, only one counter (row to endRow) should be needed
+  while (row <= endRow) {
+
+    if (this.gameboard[row][col] == this.curTurn)
+      count++;
+    else
+      count = 0;
+
+    if (count == WINCOND)
+      return true;
+
+    row++;
+    col++;
+  }
+
+  return false;
+};
+
+
+// Function to see if someone won negative diagonally
+// Row and col are latest move space
+Game.prototype.checkForNegDiagWin = function(col, row) {
+
+  // Set up endRow and endCol by setting one to max, other to min
+  var endRow = min(row + WINCOND - 1, NUMROWS - 1);
+  var endCol = max(col - WINCOND + 1, 0);
+
+  // Then equalizing them to the values such that they will both be in bounds and on the diag
+  var diff = min(endRow - row, col - endCol);
+  endRow = row + diff;
+  endCol = col - diff;
+
+  // Set up row and col the same way, both to best possible
+  row = max(row - WINCOND + 1, 0);
+  col = min(col + WINCOND - 1, NUMCOLS - 1);
+
+  // Then equalize to best in bounds and on diag
+  diff = min(endRow - row, col - endCol);
+  row = endRow - diff;
+  col = endCol + diff;
+
+
+
+  int count = 0;
+
+  // Because all are equalized, only one counter (row to endRow) should be needed
+  while (row <= endRow)
+  {
+    if (board[row][col] == curVal)
+      count++;
+    else
+      count = 0;
+
+    if (count == WINCOND)
+      return 1;
+
+    row++;
+    col--;
+  }
+
+  return 0;
+
+
+
+  return 0;
+}
+
+
+// Helper functions
+function max(x, y) {
+  return (x > y) ? x : y;
+}
+function min(x, y) {
+  return (x < y) ? x : y;
+}
 
