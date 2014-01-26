@@ -45,7 +45,7 @@ function initialize(playerName) {
 
   pname = prompt("Hi! What's your name?");
 
-  socket = io.connect('http://localhost');
+  socket = io.connect('http://getcreative.herokuapp.com');
   socket.emit('newPlayer', pname);
 
   socket.on('matchFound', matchFound);
