@@ -144,9 +144,8 @@ Game.prototype.checkForHorizWin = function(col, row) {
   var count = 0;
   for (;col <= endCol; col++) {
 
-    if (this.gameboard[col][row] == this.curTurn) {
+    if (this.gameboard[col][row] == this.curTurn)
       count++;
-    }
     else
       count = 0;
 
