@@ -98,8 +98,8 @@ Game.prototype.handleMove = function(pNum, column) {
 
       this.gameboard[column][y] = pNum;
 
-      this.curTurn = (this.curTurn == 1) ? 2 : 1;
       var win = this.checkForWin(column, y);
+      this.curTurn = (this.curTurn == 1) ? 2 : 1;
 
       // Broadcast the move
       this.player1.socket.emit('move', {
@@ -144,8 +144,9 @@ Game.prototype.checkForHorizWin = function(col, row) {
   var count = 0;
   for (;col <= endCol; col++) {
 
-    if (this.gameboard[row][col] == this.curTurn)
+    if (this.gameboard[col][row] == this.curTurn) {
       count++;
+    }
     else
       count = 0;
 
@@ -173,7 +174,7 @@ Game.prototype.checkForVertWin = function(col, row) {
   var count = 0;
   for (;row <= endRow; row++) {
 
-    if (this.gameboard[row][col] == this.curTurn)
+    if (this.gameboard[col][row] == this.curTurn)
       count++;
     else
       count = 0;
@@ -192,8 +193,8 @@ Game.prototype.checkForVertWin = function(col, row) {
 Game.prototype.checkForPosDiagWin = function(col, row) {
 
   // Set up endRow and endCol by setting to both to max possible
-  var endRow = min(row + WINCOND - 1, NUMROWS - 1);
-  var endCol = min(col + WINCOND - 1, NUMCOLS - 1);
+  var endRow = min(row + WINCOND - 1, BOARDHEIGHT - 1);
+  var endCol = min(col + WINCOND - 1, BOARDWIDTH - 1);
 
   // Then equalizing them to the max in bounds and on diag
   var diff = min(endRow - row, endCol - col);
@@ -216,7 +217,7 @@ Game.prototype.checkForPosDiagWin = function(col, row) {
   // Because all are equalized, only one counter (row to endRow) should be needed
   while (row <= endRow) {
 
-    if (this.gameboard[row][col] == this.curTurn)
+    if (this.gameboard[col][row] == this.curTurn)
       count++;
     else
       count = 0;
@@ -237,7 +238,7 @@ Game.prototype.checkForPosDiagWin = function(col, row) {
 Game.prototype.checkForNegDiagWin = function(col, row) {
 
   // Set up endRow and endCol by setting one to max, other to min
-  var endRow = min(row + WINCOND - 1, NUMROWS - 1);
+  var endRow = min(row + WINCOND - 1, BOARDHEIGHT - 1);
   var endCol = max(col - WINCOND + 1, 0);
 
   // Then equalizing them to the values such that they will both be in bounds and on the diag
@@ -247,7 +248,7 @@ Game.prototype.checkForNegDiagWin = function(col, row) {
 
   // Set up row and col the same way, both to best possible
   row = max(row - WINCOND + 1, 0);
-  col = min(col + WINCOND - 1, NUMCOLS - 1);
+  col = min(col + WINCOND - 1, BOARDWIDTH - 1);
 
   // Then equalize to best in bounds and on diag
   diff = min(endRow - row, col - endCol);
@@ -256,29 +257,25 @@ Game.prototype.checkForNegDiagWin = function(col, row) {
 
 
 
-  int count = 0;
+  var count = 0;
 
   // Because all are equalized, only one counter (row to endRow) should be needed
-  while (row <= endRow)
-  {
-    if (board[row][col] == curVal)
+  while (row <= endRow) {
+
+    if (this.gameboard[col][row] == this.curTurn)
       count++;
     else
       count = 0;
 
     if (count == WINCOND)
-      return 1;
+      return true;
 
     row++;
     col--;
   }
 
-  return 0;
-
-
-
-  return 0;
-}
+  return false;
+};
 
 
 // Helper functions

@@ -101,6 +101,14 @@ function handleMove(move) {
   curTurn = move.turn;
   gameboard[move.x][move.y] = move.pNum;
   render();
+  if (move.win) {
+    if (move.pNum == pNum) {
+      alert('You won!');
+    }
+    else {
+      alert('You lost!');
+    }
+  }
 }
 
 function render() {
