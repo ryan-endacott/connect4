@@ -101,21 +101,17 @@ Game.prototype.handleMove = function(pNum, column) {
       var win = this.checkForWin(column, y);
       this.curTurn = (this.curTurn == 1) ? 2 : 1;
 
+      var curMove = {
+        x: column,
+        y: y,
+        pNum: pNum,
+        turn: this.curTurn,
+        win: win
+      };
+
       // Broadcast the move
-      this.player1.socket.emit('move', {
-        x: column,
-        y: y,
-        pNum: pNum,
-        turn: this.curTurn,
-        win: win
-      });
-      this.player2.socket.emit('move', {
-        x: column,
-        y: y,
-        pNum: pNum,
-        turn: this.curTurn,
-        win: win
-      });
+      this.player1.socket.emit('move', curMove);
+      this.player2.socket.emit('move', curMove);
 
       break;
     }

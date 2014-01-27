@@ -85,7 +85,10 @@ function handleClick(evt) {
 
   var mousePos = getMousePos(canvas, evt);
   var column = Math.floor(mousePos.x / TSIZE);
-  // TODO: handle case of a full column later
+  // Don't do anything if click was in a full column
+  if (gameboard[column][0] !== undefined)
+    return;
+
   curTurn = (pNum == 1) ? 2 : 1
   socket.emit('move', column);
 }
