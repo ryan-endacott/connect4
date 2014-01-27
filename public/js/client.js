@@ -17,7 +17,7 @@ var opponentName;
 // constants
 var P1 = 1;
 var P2 = 2;
-var BOARDWIDTH = 8;
+var BOARDWIDTH = 7;
 var BOARDHEIGHT = 6;
 
 // Note:  The values below need to change if canvas size changes.

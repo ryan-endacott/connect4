@@ -3,7 +3,7 @@
 var unmatchedPlayers = [];
 
 // Constants
-var BOARDWIDTH = 8;
+var BOARDWIDTH = 7;
 var BOARDHEIGHT = 6;
 var WINCOND = 4; // num in a row needed to win
 
