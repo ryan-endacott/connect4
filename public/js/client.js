@@ -70,7 +70,10 @@ function matchFound(data) {
 function setTurn(turn) {
   curTurn = turn;
   if (pNum == turn) {
-    alert("It's your turn!");
+    $('#turninfo').text("It's your turn...");
+  }
+  else {
+    $('#turninfo').text("It's " + opponentName + "'s turn...");
   }
 }
 
@@ -98,7 +101,7 @@ function getMousePos(canvas, evt) {
 
 
 function handleMove(move) {
-  curTurn = move.turn;
+  setTurn(move.turn);
   gameboard[move.x][move.y] = move.pNum;
   render();
   if (move.win) {
