@@ -113,6 +113,12 @@ Game.prototype.handleMove = function(pNum, column) {
       this.player1.socket.emit('move', curMove);
       this.player2.socket.emit('move', curMove);
 
+      // Remove the game event listeners if there was a win
+      if (win) {
+        this.player1.socket.removeAllListeners('move');
+        this.player2.socket.removeAllListeners('move');
+      }
+
       break;
     }
   }

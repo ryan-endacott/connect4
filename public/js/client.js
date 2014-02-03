@@ -28,7 +28,7 @@ var CMOD = TSIZE / 2;
 var RAD = 40; // gamepiece radius
 
 // initialize game
-function initialize(playerName) {
+function initialize() {
 
   canvas = document.getElementById('connect4');
   ctx = canvas.getContext('2d');
@@ -43,16 +43,22 @@ function initialize(playerName) {
 
   render();
 
-  pname = prompt("Hi! What's your name?");
+  // Get their name if its their first game
+  if (pname === undefined)
+    pname = prompt("Hi! What's your name?");
 
-  socket = io.connect();
+  // Connect and set up events if its their first game
+  if (socket === undefined) {
+    socket = io.connect();
+
+    socket.on('matchFound', matchFound);
+    socket.on('error', handleError);
+    socket.on('move', handleMove);
+
+    $(canvas).click(handleClick);
+  }
+
   socket.emit('newPlayer', pname);
-
-  socket.on('matchFound', matchFound);
-  socket.on('error', handleError);
-  socket.on('move', handleMove);
-
-  $(canvas).click(handleClick);
 }
 
 function handleError(error) {
@@ -113,6 +119,11 @@ function handleMove(move) {
     }
     else {
       alert('You lost!');
+    }
+
+    // restart the game if they wanna play again
+    if (confirm("Do you want to play again?")) {
+      initialize();
     }
   }
 }
