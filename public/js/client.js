@@ -30,6 +30,7 @@ var RAD = 40; // gamepiece radius
 // initialize game
 function initialize() {
 
+  setDisplay('Welcome!')
   canvas = document.getElementById('connect4');
   ctx = canvas.getContext('2d');
   width = canvas.width;
@@ -59,6 +60,8 @@ function initialize() {
   }
 
   socket.emit('newPlayer', pname);
+
+  setDisplay('Waiting for match...');
 }
 
 function handleError(error) {
@@ -76,11 +79,15 @@ function matchFound(data) {
 function setTurn(turn) {
   curTurn = turn;
   if (pNum == turn) {
-    $('#turninfo').text("It's your turn...");
+    setDisplay("It's your turn...");
   }
   else {
-    $('#turninfo').text("It's " + opponentName + "'s turn...");
+    setDisplay("It's " + opponentName + "'s turn...");
   }
+}
+
+function setDisplay(message) {
+  $('#turninfo').text(message);
 }
 
 // Handle a gameboard click and make a move if it is
@@ -115,9 +122,11 @@ function handleMove(move) {
   render();
   if (move.win) {
     if (move.pNum == pNum) {
+      setDisplay('You won!')
       alert('You won!');
     }
     else {
+      setDisplay('You lost!')
       alert('You lost!');
     }
 
